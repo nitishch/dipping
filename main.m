@@ -1,5 +1,6 @@
 function [output_image] = main(input_image_path, orows, ocols, epsilon, window_size)
     input_image = double(imread(input_image_path));
+    input_image = input_image(1:20,1:20);
     
     %% Image normalisation
     input_image = input_image - min(input_image(:)) + 1;
@@ -28,18 +29,20 @@ function [output_image] = main(input_image_path, orows, ocols, epsilon, window_s
             output_image(i, j) = giveValue(input_image, output_image, window_size, epsilon, i, j);
         end
     end
-    
+    disp('out of first');
     %% STEP 2 - The first window_size row
     for i = window_size + 1 : orows
         for j = 1:window_size
             output_image(j, i) = giveValue(input_image, output_image, window_size, epsilon, j , i);
         end
     end
-    
+    disp('out of second');
     %% STEP 3
     for i = window_size + 1: orows
         for j = 1:ocols
             output_image(i, j) = giveValue(input_image, output_image, window_size, epsilon, i, j);
+            i
+            j
         end
     end
 
@@ -63,9 +66,11 @@ function [outputValue] = giveValue(input_image, output_image, windowSize, epsilo
         temp_matrix = (probe_image -  given_image) .* (probe_image ~= 0) .* (given_image ~= 0);
         o = rms(temp_matrix(:));
     end
+    %h = findobj(allchild(0), 'type', 'figure', 'tag', 'TMWWaitbar');
+    %set(h, 'visibility', 'off')
     closestOnes = input_image .* (errorImage <= (1 + epsilon) * min(errorImage(:)));
     closestOnes = nonzeros(closestOnes);
-    closestOnes
-    size(closestOnes)
+    %closestOnes
+    %size(closestOnes)
     outputValue = closestOnes(randi(size(closestOnes, 1)));
 end
