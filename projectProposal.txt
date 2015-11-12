@@ -1,0 +1,16 @@
+Members: K Dheeraj Reddy   (120050061)
+         D Vinay Chandra   (120050063)
+         Ch Nitish Chandra (120050071)
+
+
+Paper: Texture Synthesis by Non-parametric Sampling by Alexei
+       A. Efros, Thomas Leung
+
+Databases: Brodatz texture images from
+           http://sipi.usc.edu/database/database.php?volume=textures
+           
+Evaluation: Since the paper is concerned with the texture synthesis,
+            we take a portion of image from the available texture and
+            try to recreate the original texture.  We can measure the
+            performance by comparing the result with original texture
+            using some distance metric.
