@@ -1,6 +1,6 @@
 function [output_image] = main(input_image_path, orows, ocols, epsilon, window_size)
     input_image = double(imread(input_image_path));
-    input_image = input_image(1:20,1:20);
+    input_image = input_image(1:40,1:40);
     
     %% Image normalisation
     input_image = input_image - min(input_image(:)) + 1;
@@ -21,7 +21,7 @@ function [output_image] = main(input_image_path, orows, ocols, epsilon, window_s
 
    
     %% Step 1 - FIll up the box
-    for i = 4:window_size
+    for i = 4:window_size % i is column index here
         for j = 1:i
            output_image(j,i) = giveValue(input_image, output_image, window_size, epsilon, j, i);
         end
@@ -31,7 +31,7 @@ function [output_image] = main(input_image_path, orows, ocols, epsilon, window_s
     end
     disp('out of first');
     %% STEP 2 - The first window_size row
-    for i = window_size + 1 : orows
+    for i = window_size + 1 : ocols % i is the column index here
         for j = 1:window_size
             output_image(j, i) = giveValue(input_image, output_image, window_size, epsilon, j , i);
         end
@@ -41,17 +41,14 @@ function [output_image] = main(input_image_path, orows, ocols, epsilon, window_s
     for i = window_size + 1: orows
         for j = 1:ocols
             output_image(i, j) = giveValue(input_image, output_image, window_size, epsilon, i, j);
-            i
-            j
         end
+        i
     end
-
 end
 
 
 
 function [outputValue] = giveValue(input_image, output_image, windowSize, epsilon, row, col)
-   
  %% Output image padding
     pad_length = (windowSize - 1)/2;
     padded_output = double(zeros(size(output_image) + windowSize - 1));
@@ -63,8 +60,9 @@ function [outputValue] = giveValue(input_image, output_image, windowSize, epsilo
     padLength = (windowSize - 1)/2;
     errorImage = nlfilter(input_image, [windowSize, windowSize], @intermediate);
     function [o] = intermediate(given_image)
-        temp_matrix = (probe_image -  given_image) .* (probe_image ~= 0) .* (given_image ~= 0);
-        o = rms(temp_matrix(:));
+        mask = (probe_image ~= 0) .* (given_image ~= 0);
+        temp_matrix = (probe_image -  given_image) .* mask;
+        o = rms(temp_matrix(:))/sum(mask(:));
     end
     %h = findobj(allchild(0), 'type', 'figure', 'tag', 'TMWWaitbar');
     %set(h, 'visibility', 'off')
@@ -72,5 +70,10 @@ function [outputValue] = giveValue(input_image, output_image, windowSize, epsilo
     closestOnes = nonzeros(closestOnes);
     %closestOnes
     %size(closestOnes)
+    outputValue = 0;
+%    for i = 1:100
+ %       outputValue = outputValue + closestOnes(randi(size(closestOnes, 1)));
+%    end
+%    outputValue = outputValue/100;
     outputValue = closestOnes(randi(size(closestOnes, 1)));
 end
