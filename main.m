@@ -53,8 +53,8 @@ function [output_image] = main2(input_image, orows, ocols, epsilon, window_size)
     function [o] = giveValue(probe_image)
         if(sum(probe_image(:)) == 0) o = 100000;
         else
-            [idx, d] = knnsearch(distMat,probe_image(:)','K', 50);
-           % [idx, d] = knnsearch(windows, probe_image(:)', 'Distance', @distfun, 'K', 50);
+            %[idx, d] = knnsearch(distMat,probe_image(:)','K', 50);
+           [idx, d] = knnsearch(windows, probe_image(:)', 'Distance', @distfun, 'K', 50);
            %[idx, d] = knnsearchtemp,probe_image(:)', 'Distance', @distfun, 'K', 50);
             idx = idx(d <= (1 + epsilon) * d(1));
             temp = windows(idx(randi(size(idx, 2))), :);
@@ -64,8 +64,8 @@ function [output_image] = main2(input_image, orows, ocols, epsilon, window_size)
     %Spiralling out
       x=0;
       y=0;
-      dx=1;
-      dy=0;
+      dx=0;
+      dy=-1;
       for i = 1:(orows*ocols)
           %i
          disp(x);
