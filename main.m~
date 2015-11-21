@@ -1,6 +1,6 @@
 function [output_image] = main(input_image_path, orows, ocols, epsilon, window_size)
     input_image = double(imread(input_image_path));
-   % input_image = input_image(1:20,1:20);
+    %input_image = input_image(1:40,1:40);
     
     %% Image normalisation
     input_image = input_image - min(input_image(:)) + 1;
@@ -33,20 +33,20 @@ function [output_image] = main(input_image_path, orows, ocols, epsilon, window_s
     end
     
     function [distance_vector] = distfun(z1byn, zmbyn)
-        gaussian = fspecial('gaussian', window_size, window_size/6.4);
+        gaussian = fspecial('gaussian', window_size, sqrt(window_size));
         gaussian = gaussian(:)';
         distance_vector = [];
         for row = 1:size(zmbyn, 1)
             mask = (z1byn ~= 0) .* (zmbyn(row, :) ~= 0).*gaussian;
             temp=mask .* (zmbyn(row, :) - z1byn);
-            distance_vector = [distance_vector;sqrt(sum(temp.*temp))/sqrt(sum(mask(:)))];
+            distance_vector = [distance_vector; (temp.^2)/sqrt(sum(mask(:)))];
         end
     end
 
     function [o] = giveValue(probe_image)
         if(sum(probe_image(:)) == 0) o = 100000;
         else
-            [idx, d] = knnsearch(windows, probe_image(:)', 'Distance', @distfun, 'K', 20);
+            [idx, d] = knnsearch(windows, probe_image(:)', 'Distance', @distfun, 'K', 200);
             idx = idx(d <= (1 + epsilon) * d(1));
             temp = windows(idx(randi(size(idx, 2))), :);
             o = temp(ceil((window_size * window_size)/2));
